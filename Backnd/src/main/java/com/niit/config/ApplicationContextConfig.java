@@ -2,6 +2,7 @@ package com.niit.config;
 
 import java.util.Properties;
 
+
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
@@ -13,6 +14,19 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.niit.DAO.CategoryDAO;
+import com.niit.DAO.ProductDAO;
+import com.niit.DAO.SupplierDAO;
+import com.niit.DAO.UserDAO;
+import com.niit.DAOImpl.CategoryDAOImpl;
+import com.niit.DAOImpl.ProductDAOImpl;
+import com.niit.DAOImpl.SupplierDAOImpl;
+import com.niit.DAOImpl.UserDAOImpl;
+import com.niit.model.Category;
+import com.niit.model.Product;
+import com.niit.model.User;
+import com.niit.model.supplier;
 
 @Configuration
 @ComponentScan("com.niit.*")
@@ -49,7 +63,10 @@ public class ApplicationContextConfig {
 
 		LocalSessionFactoryBuilder sessionBuilder = new LocalSessionFactoryBuilder(dataSource);
 		sessionBuilder.addProperties(getHibernateProperties());
-		
+		sessionBuilder.addAnnotatedClass(supplier.class);
+		sessionBuilder.addAnnotatedClass(Product.class);
+		sessionBuilder.addAnnotatedClass(User.class);
+		sessionBuilder.addAnnotatedClass(Category.class);
 		return sessionBuilder.buildSessionFactory();
 	}
 	@Autowired
@@ -59,5 +76,27 @@ public class ApplicationContextConfig {
 
 		return transactionManager;
 	}
-
+	
+	@Autowired(required = true)
+	@Bean(name = "UserDAO")
+	public UserDAO getUserDAO(SessionFactory sessionFactory) {
+		return new UserDAOImpl(sessionFactory);
+	}
+	
+	@Autowired(required = true)
+	@Bean(name = "CategoryDAO")
+	public CategoryDAO getCategoryDAO(SessionFactory sessionFactory) {
+		return new CategoryDAOImpl(sessionFactory);
+	}
+	
+	@Autowired(required = true)
+	@Bean(name = "ProductDAO")
+	public ProductDAO getProductDAO(SessionFactory sessionFactory) {
+		return new ProductDAOImpl(sessionFactory);
+	}
+	@Autowired(required = true)
+	@Bean(name = "SupplierDAO")
+	public SupplierDAO getSupplierDAO(SessionFactory sessionFactory) {
+		return new SupplierDAOImpl(sessionFactory);
+	}
 }
